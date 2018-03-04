@@ -1,16 +1,28 @@
 # rename.py
-# by Leevi Aaltonen 2018
+# Copyright (c) 2018 Leevi Aaltonen
 # renames all files in a folder or list
 
 from pathlib import Path
 
 
-def quickrename(files, start=1):
-    # files should be a path to a directory or a list or tuple of file paths
-    # start should be an integer
+def rename(files, nformat, start=1):
+    """
+    files should be a path to a directory or a list or tuple of file paths
+    nformat should be a string containing the string "{#}" to represent the number
+    start should be an integer
+    """
 
     if not files:
-        raise ValueError("Empty path")
+        raise ValueError("files cannot be empty")
+
+    if not nformat:
+        nformat = "{num:0{numl}d}"
+    elif not isinstance(nformat, str):
+        raise TypeError("Expected string for nformat, got " + type(nformat).__name__)
+    elif "{#}" not in nformat:
+        raise ValueError("nformat must contain \"{#}\"")
+    else:
+        nformat = nformat.replace("{#}", "{num:0{numl}d}")
 
     if not start or not isinstance(start, int):
         raise TypeError("Expected integer for start, got " + type(start).__name__)
@@ -19,12 +31,13 @@ def quickrename(files, start=1):
         if files.is_dir():
             files = [file for file in files.iterdir() if file.is_file()]
         else:
-            raise ValueError("files must ")
+            raise ValueError("files must point to a directory")
 
     elif not isinstance(files, (list, tuple)):
         raise TypeError("Must be a path to a directory or a list or tuple of file path objects")
 
     for i in range(0, len(files)):
-        numl = len(str(len(files)))
+        numl = len(str(len(files)))  # pad with zeroes to the length of the largest number
         with files[i] as file:
-            file.rename(file.with_name("ep" + "{num:0{numl}d}".format(num=i + start, numl=numl)))
+            print(file.with_name(nformat.format(num=i + start, numl=numl)))
+            # file.rename(file.with_name(nformat.format(num=i + start, numl=numl)))
