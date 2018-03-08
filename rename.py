@@ -5,7 +5,7 @@
 from pathlib import Path
 
 
-def rename(files, nformat, start=1):
+def rename(files, nformat, start=1, test=False):
     """
     files should be a path to a directory or a list or tuple of file paths
     nformat should be a string containing the string "{#}" to represent the number
@@ -36,8 +36,10 @@ def rename(files, nformat, start=1):
     elif not isinstance(files, (list, tuple)):
         raise TypeError("Must be a path to a directory or a list or tuple of file path objects")
 
+    numl = len(str(len(files))) + start - 2  # pad with zeroes to the length of the largest number
     for i in range(0, len(files)):
-        numl = len(str(len(files)))  # pad with zeroes to the length of the largest number
         with files[i] as file:
-            print(file.with_name(nformat.format(num=i + start, numl=numl)))
-            # file.rename(file.with_name(nformat.format(num=i + start, numl=numl)))
+            if test:
+                print(file.with_name(nformat.format(num=i + start, numl=numl) + file.suffix))
+            else:
+                file.rename(file.with_name(nformat.format(num=i + start, numl=numl) + file.suffix))
