@@ -10,6 +10,7 @@ def rename(files, nformat, start=1, test=False):
     files should be a path to a directory or a list or tuple of file paths
     nformat should be a string containing the string "{#}" to represent the number
     start should be an integer
+    test should be a boolean
     """
 
     if not files:
@@ -24,7 +25,7 @@ def rename(files, nformat, start=1, test=False):
     else:
         nformat = nformat.replace("{#}", "{num:0{numl}d}")
 
-    if not start or not isinstance(start, int):
+    if not isinstance(start, int):
         raise TypeError("Expected integer for start, got " + type(start).__name__)
 
     if isinstance(files, Path):
@@ -36,7 +37,7 @@ def rename(files, nformat, start=1, test=False):
     elif not isinstance(files, (list, tuple)):
         raise TypeError("Must be a path to a directory or a list or tuple of file path objects")
 
-    numl = len(str(len(files))) + start - 2  # pad with zeroes to the length of the largest number
+    numl = len(str(len(files) + start - 1))  # pad with zeroes to the length of the largest number
     for i in range(0, len(files)):
         with files[i] as file:
             if test:
